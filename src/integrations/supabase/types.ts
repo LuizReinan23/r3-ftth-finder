@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clientes_ftth: {
+        Row: {
+          atualizado_em: string
+          ftth_porta: string | null
+          id: string
+          id_caixa_ftth: string | null
+          login: string
+          status_ativo: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          ftth_porta?: string | null
+          id?: string
+          id_caixa_ftth?: string | null
+          login: string
+          status_ativo?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          ftth_porta?: string | null
+          id?: string
+          id_caixa_ftth?: string | null
+          login?: string
+          status_ativo?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
