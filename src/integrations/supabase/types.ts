@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      caixas_ftth: {
+        Row: {
+          atualizado_em: string
+          capacidade: number | null
+          descricao: string | null
+          endereco: string | null
+          id: string
+          latitude: string | null
+          longitude: string | null
+          status: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          capacidade?: number | null
+          descricao?: string | null
+          endereco?: string | null
+          id: string
+          latitude?: string | null
+          longitude?: string | null
+          status?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          capacidade?: number | null
+          descricao?: string | null
+          endereco?: string | null
+          id?: string
+          latitude?: string | null
+          longitude?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       clientes_ftth: {
         Row: {
           atualizado_em: string
