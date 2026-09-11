@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { Loader2, RefreshCw, Search, X } from "lucide-react";
+import { Loader2, RefreshCw, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ function Dashboard() {
   const queryClient = useQueryClient();
   const [busca, setBusca] = useState("");
   const [buscaCaixa, setBuscaCaixa] = useState("");
-  const [caixaSelecionada, setCaixaSelecionada] = useState<string | null>(null);
+  const [caixaExpandida, setCaixaExpandida] = useState<string | null>(null);
 
   const listar = useServerFn(listClientesFtth);
   const listarCaixas = useServerFn(listCaixasFtth);
@@ -143,23 +143,13 @@ function Dashboard() {
 
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
-    let base = clientes;
-    if (caixaSelecionada) {
-      base = base.filter((c) => c.id_caixa_ftth === caixaSelecionada);
-    }
-    if (!termo) return base;
-    return base.filter((c) =>
+    if (!termo) return clientes;
+    return clientes.filter((c) =>
       [c.login, c.id_caixa_ftth, c.ftth_porta]
         .filter(Boolean)
         .some((campo) => String(campo).toLowerCase().includes(termo)),
     );
-  }, [clientes, busca, caixaSelecionada]);
-
-  const descricaoSelecionada = useMemo(() => {
-    if (!caixaSelecionada) return null;
-    const caixa = caixas.find((c) => c.id === caixaSelecionada);
-    return caixa?.descricao ?? caixaSelecionada;
-  }, [caixas, caixaSelecionada]);
+  }, [clientes, busca]);
 
   return (
     <main className="min-h-screen bg-background">
