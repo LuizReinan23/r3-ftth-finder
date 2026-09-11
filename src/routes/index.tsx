@@ -200,55 +200,87 @@ function Dashboard() {
             </p>
           ) : (
             <ul className="divide-y divide-border">
-              {ranking.map((caixa) => (
-                <li key={caixa.id}>
-                  <button
-                    type="button"
-                    onClick={() => setCaixaSelecionada(caixa.id)}
-                    className={`flex w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors hover:bg-muted ${
-                      caixaSelecionada === caixa.id ? "bg-muted" : ""
-                    }`}
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {caixa.descricao ?? `Caixa ${caixa.id}`}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {caixa.capacidade > 0
-                          ? `${caixa.total} de ${caixa.capacidade} portas`
-                          : `${caixa.total} clientes · sem capacidade cadastrada`}
-                      </p>
-                    </div>
-                    {caixa.pct !== null ? (
-                      <span
-                        className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${corOcupacao(caixa.pct)}`}
-                      >
-                        {Math.round(caixa.pct)}%
-                      </span>
-                    ) : (
-                      <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
-                        —
-                      </span>
+              {ranking.map((caixa) => {
+                const expandida = caixaExpandida === caixa.id;
+                const clientesCaixa = expandida
+                  ? clientes.filter((c) => c.id_caixa_ftth === caixa.id)
+                  : [];
+                return (
+                  <li key={caixa.id}>
+                    <button
+                      type="button"
+                      onClick={() => setCaixaExpandida(expandida ? null : caixa.id)}
+                      aria-expanded={expandida}
+                      className={`flex w-full items-center justify-between gap-4 px-4 py-3 text-left transition-colors hover:bg-muted ${
+                        expandida ? "bg-muted" : ""
+                      }`}
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-foreground">
+                          {caixa.descricao ?? `Caixa ${caixa.id}`}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {caixa.capacidade > 0
+                            ? `${caixa.total} de ${caixa.capacidade} portas`
+                            : `${caixa.total} clientes · sem capacidade cadastrada`}
+                        </p>
+                      </div>
+                      {caixa.pct !== null ? (
+                        <span
+                          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${corOcupacao(caixa.pct)}`}
+                        >
+                          {Math.round(caixa.pct)}%
+                        </span>
+                      ) : (
+                        <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+                          —
+                        </span>
+                      )}
+                    </button>
+                    {expandida && (
+                      <div className="border-t border-border bg-background/40 px-4 py-3">
+                        {clientesCaixa.length === 0 ? (
+                          <p className="py-2 text-center text-xs text-muted-foreground">
+                            Nenhum cliente encontrado para esta caixa
+                          </p>
+                        ) : (
+                          <ul className="divide-y divide-border/60">
+                            {clientesCaixa.map((c) => (
+                              <li
+                                key={c.id}
+                                className="flex items-center justify-between gap-4 py-2 text-sm"
+                              >
+                                <span className="truncate font-medium text-foreground">
+                                  {c.login}
+                                </span>
+                                <span className="text-muted-foreground">
+                                  {c.ftth_porta ?? "—"}
+                                </span>
+                                <span
+                                  className={
+                                    c.status_ativo === "S"
+                                      ? "inline-flex items-center rounded-full bg-success px-2.5 py-0.5 text-xs font-semibold text-success-foreground"
+                                      : "inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground"
+                                  }
+                                >
+                                  {c.status_ativo === "S" ? "Ativo" : "Inativo"}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     )}
-                  </button>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
-        {caixaSelecionada && (
-          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card px-4 py-3">
-            <p className="text-sm text-foreground">
-              Mostrando clientes da caixa <strong>{descricaoSelecionada}</strong>
-            </p>
-            <Button variant="outline" size="sm" onClick={() => setCaixaSelecionada(null)}>
-              <X /> Limpar filtro
-            </Button>
-          </div>
-        )}
+
 
         <div className="relative mb-4">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
