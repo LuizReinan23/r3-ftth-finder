@@ -22,9 +22,11 @@ function clientePublico() {
 export const listClientesFtth = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await clientePublico()
     .from("clientes_ftth")
-    .select("id, login, id_caixa_ftth, ftth_porta, status_ativo, atualizado_em")
+    .select(
+      "id, login, id_caixa_ftth, ftth_porta, status_ativo, interface_transmissao, atualizado_em",
+    )
     .order("atualizado_em", { ascending: false })
-    .limit(5000);
+    .limit(50000);
 
   if (error) throw new Error(error.message);
   return data ?? [];
@@ -33,7 +35,29 @@ export const listClientesFtth = createServerFn({ method: "GET" }).handler(async 
 export const listCaixasFtth = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await clientePublico()
     .from("caixas_ftth")
-    .select("id, descricao, capacidade, status, endereco, atualizado_em")
+    .select(
+      "id, descricao, capacidade, status, endereco, tipo, id_transmissor, id_interface, id_projeto, atualizado_em",
+    )
+    .limit(20000);
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+export const listTransmissores = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await clientePublico()
+    .from("transmissores")
+    .select("id, descricao, atualizado_em")
+    .limit(5000);
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+export const listProjetos = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await clientePublico()
+    .from("projetos")
+    .select("id, descricao, atualizado_em")
     .limit(5000);
 
   if (error) throw new Error(error.message);

@@ -21,9 +21,13 @@ export type Database = {
           descricao: string | null
           endereco: string | null
           id: string
+          id_interface: string | null
+          id_projeto: string | null
+          id_transmissor: string | null
           latitude: string | null
           longitude: string | null
           status: string | null
+          tipo: string | null
         }
         Insert: {
           atualizado_em?: string
@@ -31,9 +35,13 @@ export type Database = {
           descricao?: string | null
           endereco?: string | null
           id: string
+          id_interface?: string | null
+          id_projeto?: string | null
+          id_transmissor?: string | null
           latitude?: string | null
           longitude?: string | null
           status?: string | null
+          tipo?: string | null
         }
         Update: {
           atualizado_em?: string
@@ -41,9 +49,13 @@ export type Database = {
           descricao?: string | null
           endereco?: string | null
           id?: string
+          id_interface?: string | null
+          id_projeto?: string | null
+          id_transmissor?: string | null
           latitude?: string | null
           longitude?: string | null
           status?: string | null
+          tipo?: string | null
         }
         Relationships: []
       }
@@ -53,6 +65,7 @@ export type Database = {
           ftth_porta: string | null
           id: string
           id_caixa_ftth: string | null
+          interface_transmissao: string | null
           login: string
           status_ativo: string | null
         }
@@ -61,6 +74,7 @@ export type Database = {
           ftth_porta?: string | null
           id?: string
           id_caixa_ftth?: string | null
+          interface_transmissao?: string | null
           login: string
           status_ativo?: string | null
         }
@@ -69,8 +83,45 @@ export type Database = {
           ftth_porta?: string | null
           id?: string
           id_caixa_ftth?: string | null
+          interface_transmissao?: string | null
           login?: string
           status_ativo?: string | null
+        }
+        Relationships: []
+      }
+      projetos: {
+        Row: {
+          atualizado_em: string
+          descricao: string | null
+          id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          descricao?: string | null
+          id: string
+        }
+        Update: {
+          atualizado_em?: string
+          descricao?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      transmissores: {
+        Row: {
+          atualizado_em: string
+          descricao: string | null
+          id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          descricao?: string | null
+          id: string
+        }
+        Update: {
+          atualizado_em?: string
+          descricao?: string | null
+          id?: string
         }
         Relationships: []
       }
