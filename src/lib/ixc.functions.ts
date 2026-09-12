@@ -80,6 +80,7 @@ export const syncIxcClientes = createServerFn({ method: "POST" }).handler(async 
       id_caixa_ftth: texto(r["id_caixa_ftth"]),
       ftth_porta: texto(r["ftth_porta"]),
       status_ativo: texto(r["ativo"]) ?? "N",
+      interface_transmissao: texto(r["interface_transmissao"]),
       atualizado_em: agora,
     }))
     .filter((r): r is { login: string } & typeof r => Boolean(r.login));

@@ -90,6 +90,10 @@ export const syncIxcCaixas = createServerFn({ method: "POST" }).handler(async ()
       endereco: texto(r["endereco"]),
       latitude: texto(r["latitude"]),
       longitude: texto(r["longitude"]),
+      id_transmissor: texto(r["id_transmissor"]),
+      id_interface: texto(r["id_interface"]),
+      id_projeto: texto(r["id_projeto"]),
+      tipo: texto(r["tipo"]),
       atualizado_em: agora,
     }))
     .filter((r): r is { id: string } & typeof r => Boolean(r.id));
