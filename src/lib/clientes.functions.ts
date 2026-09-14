@@ -54,6 +54,16 @@ export const listTransmissores = createServerFn({ method: "GET" }).handler(async
   return data ?? [];
 });
 
+export const listInterfacesFtth = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await clientePublico()
+    .from("interfaces_ftth")
+    .select("id, transmissor, interface, atualizado_em")
+    .limit(5000);
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
 export const listProjetos = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await clientePublico()
     .from("projetos")

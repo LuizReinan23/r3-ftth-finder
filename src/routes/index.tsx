@@ -29,6 +29,7 @@ import { CampoSelecao } from "@/components/CampoSelecao";
 import {
   listCaixasFtth,
   listClientesFtth,
+  listInterfacesFtth,
   listProjetos,
   listTransmissores,
 } from "@/lib/clientes.functions";
@@ -109,6 +110,7 @@ function Dashboard() {
   const listarCaixas = useServerFn(listCaixasFtth);
   const listarTransmissores = useServerFn(listTransmissores);
   const listarProjetos = useServerFn(listProjetos);
+  const listarInterfaces = useServerFn(listInterfacesFtth);
   const sincronizarClientes = useServerFn(syncIxcClientes);
   const sincronizarCaixas = useServerFn(syncIxcCaixas);
   const sincronizarTransmissores = useServerFn(syncIxcTransmissores);
@@ -129,6 +131,10 @@ function Dashboard() {
   const { data: projetos = [] } = useQuery({
     queryKey: ["projetos"],
     queryFn: () => listarProjetos(),
+  });
+  const { data: interfacesFtth = [] } = useQuery({
+    queryKey: ["interfaces_ftth"],
+    queryFn: () => listarInterfaces(),
   });
 
   const sync = useMutation({
