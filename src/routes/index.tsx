@@ -105,6 +105,7 @@ function Dashboard() {
   const [ctoSelecionada, setCtoSelecionada] = useState<string | null>(null);
   const [verDivergentes, setVerDivergentes] = useState(false);
   const [buscaDivergentes, setBuscaDivergentes] = useState("");
+  const [interfaceFiltroDivergentes, setInterfaceFiltroDivergentes] = useState<string | null>(null);
 
   const listar = useServerFn(listClientesFtth);
   const listarCaixas = useServerFn(listCaixasFtth);
@@ -312,12 +313,23 @@ function Dashboard() {
 
   const divergentesFiltrados = useMemo(() => {
     const termo = buscaDivergentes.trim().toLowerCase();
-    if (!termo) return divergentes;
-    return divergentes.filter(
-      (d) =>
-        d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo),
-    );
-  }, [divergentes, buscaDivergentes]);
+    return divergentes.filter((d) => {
+      if (interfaceFiltroDivergentes && d.esperada !== interfaceFiltroDivergentes) return false;
+      if (!termo) return true;
+      return d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo);
+    });
+  }, [divergentes, buscaDivergentes, interfaceFiltroDivergentes]);
+
+  const opcoesInterfaceDivergentes = useMemo(() => {
+    const contagem = new Map<string, number>();
+    for (const c of caixas) {
+      if (!c.id_interface) continue;
+      contagem.set(c.id_interface, (contagem.get(c.id_interface) ?? 0) + 1);
+    }
+    return Array.from(contagem.entries())
+      .map(([valor, qtd]) => ({ valor, rotulo: `${traduzirInterface(valor)} (${qtd} CTO${qtd > 1 ? "s" : ""})`, qtd }))
+      .sort((a, b) => b.qtd - a.qtd);
+  }, [caixas, mapaInterface]);
 
   const opcoesCto = useMemo(
     () => caixas.map((c) => ({ valor: c.id, rotulo: c.descricao ?? `Caixa ${c.id}` })),
@@ -717,15 +729,26 @@ function Dashboard() {
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-foreground">
             Clientes com CTO divergente
           </h2>
-          <div className="relative mb-4 max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={buscaDivergentes}
-              onChange={(e) => setBuscaDivergentes(e.target.value)}
-              placeholder="Buscar por login ou caixa"
-              className="pl-9"
-              aria-label="Buscar clientes divergentes"
-            />
+          <div className="mb-4 flex flex-wrap items-end gap-3">
+            <div className="relative max-w-md flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={buscaDivergentes}
+                onChange={(e) => setBuscaDivergentes(e.target.value)}
+                placeholder="Buscar por login ou caixa"
+                className="pl-9"
+                aria-label="Buscar clientes divergentes"
+              />
+            </div>
+            <div className="w-full max-w-xs">
+              <CampoSelecao
+                rotulo="Interface esperada"
+                placeholder="Filtrar por interface esperada"
+                opcoes={opcoesInterfaceDivergentes.map(({ valor, rotulo }) => ({ valor, rotulo }))}
+                valor={interfaceFiltroDivergentes}
+                aoMudar={setInterfaceFiltroDivergentes}
+              />
+            </div>
           </div>
           <div className="overflow-hidden rounded-lg border border-border bg-card">
             <Table>
