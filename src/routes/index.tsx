@@ -313,12 +313,23 @@ function Dashboard() {
 
   const divergentesFiltrados = useMemo(() => {
     const termo = buscaDivergentes.trim().toLowerCase();
-    if (!termo) return divergentes;
-    return divergentes.filter(
-      (d) =>
-        d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo),
-    );
-  }, [divergentes, buscaDivergentes]);
+    return divergentes.filter((d) => {
+      if (interfaceFiltroDivergentes && d.esperada !== interfaceFiltroDivergentes) return false;
+      if (!termo) return true;
+      return d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo);
+    });
+  }, [divergentes, buscaDivergentes, interfaceFiltroDivergentes]);
+
+  const opcoesInterfaceDivergentes = useMemo(() => {
+    const contagem = new Map<string, number>();
+    for (const c of caixas) {
+      if (!c.id_interface) continue;
+      contagem.set(c.id_interface, (contagem.get(c.id_interface) ?? 0) + 1);
+    }
+    return Array.from(contagem.entries())
+      .map(([valor, qtd]) => ({ valor, rotulo: `${traduzirInterface(valor)} (${qtd} CTO${qtd > 1 ? "s" : ""})`, qtd }))
+      .sort((a, b) => b.qtd - a.qtd);
+  }, [caixas, mapaInterface]);
 
   const opcoesCto = useMemo(
     () => caixas.map((c) => ({ valor: c.id, rotulo: c.descricao ?? `Caixa ${c.id}` })),
