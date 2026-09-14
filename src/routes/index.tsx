@@ -105,6 +105,7 @@ function Dashboard() {
   const [ctoSelecionada, setCtoSelecionada] = useState<string | null>(null);
   const [verDivergentes, setVerDivergentes] = useState(false);
   const [buscaDivergentes, setBuscaDivergentes] = useState("");
+  const [interfaceFiltroDivergentes, setInterfaceFiltroDivergentes] = useState<string | null>(null);
 
   const listar = useServerFn(listClientesFtth);
   const listarCaixas = useServerFn(listCaixasFtth);
