@@ -729,15 +729,26 @@ function Dashboard() {
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-foreground">
             Clientes com CTO divergente
           </h2>
-          <div className="relative mb-4 max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={buscaDivergentes}
-              onChange={(e) => setBuscaDivergentes(e.target.value)}
-              placeholder="Buscar por login ou caixa"
-              className="pl-9"
-              aria-label="Buscar clientes divergentes"
-            />
+          <div className="mb-4 flex flex-wrap items-end gap-3">
+            <div className="relative max-w-md flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={buscaDivergentes}
+                onChange={(e) => setBuscaDivergentes(e.target.value)}
+                placeholder="Buscar por login ou caixa"
+                className="pl-9"
+                aria-label="Buscar clientes divergentes"
+              />
+            </div>
+            <div className="w-full max-w-xs">
+              <CampoSelecao
+                rotulo="Interface esperada"
+                placeholder="Filtrar por interface esperada"
+                opcoes={opcoesInterfaceDivergentes.map(({ valor, rotulo }) => ({ valor, rotulo }))}
+                valor={interfaceFiltroDivergentes}
+                aoMudar={setInterfaceFiltroDivergentes}
+              />
+            </div>
           </div>
           <div className="overflow-hidden rounded-lg border border-border bg-card">
             <Table>
