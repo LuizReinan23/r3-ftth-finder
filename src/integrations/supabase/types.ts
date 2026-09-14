@@ -89,6 +89,27 @@ export type Database = {
         }
         Relationships: []
       }
+      interfaces_ftth: {
+        Row: {
+          atualizado_em: string
+          id: string
+          interface: string | null
+          transmissor: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          id: string
+          interface?: string | null
+          transmissor?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          id?: string
+          interface?: string | null
+          transmissor?: string | null
+        }
+        Relationships: []
+      }
       projetos: {
         Row: {
           atualizado_em: string
