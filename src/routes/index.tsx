@@ -646,21 +646,24 @@ function Dashboard() {
                                     </span>
                                   ))}
                                 </span>
-                              ) : (
-                                <span
-                                  className={`flex items-center gap-1 ${
-                                    p.clientes[0].status_ativo !== "S"
-                                      ? "text-destructive"
-                                      : "text-foreground"
-                                  }`}
-                                >
-                                  {p.clientes[0].login}
-                                  {p.clientes[0].status_ativo !== "S" && (
-                                    <span className="text-[10px] uppercase text-muted-foreground">
-                                      offline
+                              ) : (() => {
+                                  const cli = p.clientes[0]!;
+                                  const offline = cli.status_ativo !== "S";
+                                  return (
+                                    <span
+                                      className={`flex items-center gap-1 ${
+                                        offline ? "text-destructive" : "text-foreground"
+                                      }`}
+                                    >
+                                      {cli.login}
+                                      {offline && (
+                                        <span className="text-[10px] uppercase text-muted-foreground">
+                                          offline
+                                        </span>
+                                      )}
                                     </span>
-                                  )}
-                                </span>
+                                  );
+                                })()
                               )}
                             </span>
                             {conflito && (
