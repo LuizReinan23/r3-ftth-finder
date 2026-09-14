@@ -282,6 +282,28 @@ function Dashboard() {
 
   const detalhe = ctoSelecionada ? linhas.find((l) => l.id === ctoSelecionada) : undefined;
 
+  const portasDetalhe = useMemo(() => {
+    if (!detalhe) return [];
+    const lista = clientesPorCaixa.get(detalhe.id) ?? [];
+    const porPorta = new Map<string, typeof lista>();
+    for (const c of lista) {
+      if (!c.ftth_porta) continue;
+      const arr = porPorta.get(c.ftth_porta);
+      if (arr) arr.push(c);
+      else porPorta.set(c.ftth_porta, [c]);
+    }
+    const capacidade = detalhe.capacidade ?? 0;
+    if (capacidade <= 0) {
+      return Array.from(porPorta.entries())
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([porta, clientes]) => ({ porta, clientes }));
+    }
+    return Array.from({ length: capacidade }, (_, i) => {
+      const porta = String(i + 1);
+      return { porta, clientes: porPorta.get(porta) ?? [] };
+    });
+  }, [detalhe, clientesPorCaixa]);
+
   const resumo = useMemo(() => {
     const todasOffline = filtradas.filter((l) => l.total > 0 && l.offline === l.total).length;
     const noLimite = filtradas.filter((l) => l.capacidade > 0 && l.total >= l.capacidade).length;
@@ -579,6 +601,83 @@ function Dashboard() {
                   {detalhe.divergentes} cliente(s) com interface divergente nesta caixa
                 </p>
               )}
+
+              <div className="mt-5">
+                <h4 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Portas
+                </h4>
+                <div className="max-h-72 overflow-y-auto rounded-md border border-border">
+                  <ul className="divide-y divide-border">
+                    {portasDetalhe.length === 0 ? (
+                      <li className="px-3 py-3 text-sm text-muted-foreground">
+                        Sem portas cadastradas para esta CTO.
+                      </li>
+                    ) : (
+                      portasDetalhe.map((p) => {
+                        const conflito = p.clientes.length > 1;
+                        return (
+                          <li
+                            key={p.porta}
+                            className="flex items-start gap-3 px-3 py-2 text-sm"
+                          >
+                            <span className="w-10 shrink-0 font-mono font-semibold text-foreground">
+                              {p.porta}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              {p.clientes.length === 0 ? (
+                                <span className="text-muted-foreground/70">Livre</span>
+                              ) : conflito ? (
+                                <span className="flex flex-col gap-0.5">
+                                  {p.clientes.map((c) => (
+                                    <span
+                                      key={c.id}
+                                      className={`flex items-center gap-1 ${
+                                        c.status_ativo !== "S"
+                                          ? "text-destructive"
+                                          : "text-foreground"
+                                      }`}
+                                    >
+                                      {c.login}
+                                      {c.status_ativo !== "S" && (
+                                        <span className="text-[10px] uppercase text-muted-foreground">
+                                          offline
+                                        </span>
+                                      )}
+                                    </span>
+                                  ))}
+                                </span>
+                              ) : (() => {
+                                  const cli = p.clientes[0]!;
+                                  const offline = cli.status_ativo !== "S";
+                                  return (
+                                    <span
+                                      className={`flex items-center gap-1 ${
+                                        offline ? "text-destructive" : "text-foreground"
+                                      }`}
+                                    >
+                                      {cli.login}
+                                      {offline && (
+                                        <span className="text-[10px] uppercase text-muted-foreground">
+                                          offline
+                                        </span>
+                                      )}
+                                    </span>
+                                  );
+                                })()
+                              }
+                            </span>
+                            {conflito && (
+                              <Badge classe="bg-destructive text-destructive-foreground">
+                                conflito
+                              </Badge>
+                            )}
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
 
