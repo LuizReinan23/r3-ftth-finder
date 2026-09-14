@@ -664,7 +664,7 @@ function Dashboard() {
                                     </span>
                                   );
                                 })()
-                              )}
+                              }
                             </span>
                             {conflito && (
                               <Badge classe="bg-destructive text-destructive-foreground">
