@@ -185,6 +185,17 @@ function Dashboard() {
     [projetos],
   );
   const mapaCaixa = useMemo(() => new Map(caixas.map((c) => [c.id, c])), [caixas]);
+  const mapaInterface = useMemo(
+    () => new Map(interfacesFtth.map((i) => [i.id, i])),
+    [interfacesFtth],
+  );
+
+  const traduzirInterface = (id: string | null | undefined) => {
+    if (!id) return "—";
+    const ref = mapaInterface.get(id);
+    if (!ref) return id;
+    return [ref.transmissor, ref.interface].filter(Boolean).join(" ") || id;
+  };
 
   const clientesPorCaixa = useMemo(() => {
     const mapa = new Map<string, typeof clientes>();
@@ -527,7 +538,9 @@ function Dashboard() {
                 </div>
                 <div>
                   <dt className="text-xs text-muted-foreground">Interface</dt>
-                  <dd className="font-medium text-foreground">{detalhe.id_interface ?? "—"}</dd>
+                  <dd className="font-medium text-foreground">
+                    {traduzirInterface(detalhe.id_interface)}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted-foreground">Portas ocupadas</dt>
@@ -637,8 +650,8 @@ function Dashboard() {
                     <TableRow key={d.id}>
                       <TableCell className="font-medium">{d.login}</TableCell>
                       <TableCell>{d.caixa}</TableCell>
-                      <TableCell>{d.esperada}</TableCell>
-                      <TableCell className="text-right">{d.real}</TableCell>
+                      <TableCell>{traduzirInterface(d.esperada)}</TableCell>
+                      <TableCell className="text-right">{traduzirInterface(d.real)}</TableCell>
                     </TableRow>
                   ))
                 )}
