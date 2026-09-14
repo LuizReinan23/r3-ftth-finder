@@ -282,6 +282,28 @@ function Dashboard() {
 
   const detalhe = ctoSelecionada ? linhas.find((l) => l.id === ctoSelecionada) : undefined;
 
+  const portasDetalhe = useMemo(() => {
+    if (!detalhe) return [];
+    const lista = clientesPorCaixa.get(detalhe.id) ?? [];
+    const porPorta = new Map<string, typeof lista>();
+    for (const c of lista) {
+      if (!c.ftth_porta) continue;
+      const arr = porPorta.get(c.ftth_porta);
+      if (arr) arr.push(c);
+      else porPorta.set(c.ftth_porta, [c]);
+    }
+    const capacidade = detalhe.capacidade ?? 0;
+    if (capacidade <= 0) {
+      return Array.from(porPorta.entries())
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([porta, clientes]) => ({ porta, clientes }));
+    }
+    return Array.from({ length: capacidade }, (_, i) => {
+      const porta = String(i + 1);
+      return { porta, clientes: porPorta.get(porta) ?? [] };
+    });
+  }, [detalhe, clientesPorCaixa]);
+
   const resumo = useMemo(() => {
     const todasOffline = filtradas.filter((l) => l.total > 0 && l.offline === l.total).length;
     const noLimite = filtradas.filter((l) => l.capacidade > 0 && l.total >= l.capacidade).length;
