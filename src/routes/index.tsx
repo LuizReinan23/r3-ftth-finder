@@ -601,6 +601,80 @@ function Dashboard() {
                   {detalhe.divergentes} cliente(s) com interface divergente nesta caixa
                 </p>
               )}
+
+              <div className="mt-5">
+                <h4 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Portas
+                </h4>
+                <div className="max-h-72 overflow-y-auto rounded-md border border-border">
+                  <ul className="divide-y divide-border">
+                    {portasDetalhe.length === 0 ? (
+                      <li className="px-3 py-3 text-sm text-muted-foreground">
+                        Sem portas cadastradas para esta CTO.
+                      </li>
+                    ) : (
+                      portasDetalhe.map((p) => {
+                        const conflito = p.clientes.length > 1;
+                        return (
+                          <li
+                            key={p.porta}
+                            className="flex items-start gap-3 px-3 py-2 text-sm"
+                          >
+                            <span className="w-10 shrink-0 font-mono font-semibold text-foreground">
+                              {p.porta}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              {p.clientes.length === 0 ? (
+                                <span className="text-muted-foreground/70">Livre</span>
+                              ) : conflito ? (
+                                <span className="flex flex-col gap-0.5">
+                                  {p.clientes.map((c) => (
+                                    <span
+                                      key={c.id}
+                                      className={`flex items-center gap-1 ${
+                                        c.status_ativo !== "S"
+                                          ? "text-destructive"
+                                          : "text-foreground"
+                                      }`}
+                                    >
+                                      {c.login}
+                                      {c.status_ativo !== "S" && (
+                                        <span className="text-[10px] uppercase text-muted-foreground">
+                                          offline
+                                        </span>
+                                      )}
+                                    </span>
+                                  ))}
+                                </span>
+                              ) : (
+                                <span
+                                  className={`flex items-center gap-1 ${
+                                    p.clientes[0].status_ativo !== "S"
+                                      ? "text-destructive"
+                                      : "text-foreground"
+                                  }`}
+                                >
+                                  {p.clientes[0].login}
+                                  {p.clientes[0].status_ativo !== "S" && (
+                                    <span className="text-[10px] uppercase text-muted-foreground">
+                                      offline
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </span>
+                            {conflito && (
+                              <Badge classe="bg-destructive text-destructive-foreground">
+                                conflito
+                              </Badge>
+                            )}
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
 
