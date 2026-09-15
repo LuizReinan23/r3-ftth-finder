@@ -378,7 +378,7 @@ function Dashboard() {
           <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-foreground">
             Filtrar informações
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <CampoSelecao
               rotulo="CTO"
               placeholder="Selecionar CTO"
@@ -400,6 +400,13 @@ function Dashboard() {
               valor={projetoFiltro}
               aoMudar={setProjetoFiltro}
             />
+            <CampoSelecao
+              rotulo="Interface"
+              placeholder="Selecionar interface"
+              opcoes={opcoesInterface.map(({ valor, rotulo }) => ({ valor, rotulo }))}
+              valor={interfaceFiltro}
+              aoMudar={setInterfaceFiltro}
+            />
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
             <Button
@@ -408,6 +415,7 @@ function Dashboard() {
                   cto: ctoFiltro,
                   transmissor: transmissorFiltro,
                   projeto: projetoFiltro,
+                  interface: interfaceFiltro,
                 });
                 setPagina(1);
               }}
@@ -420,7 +428,8 @@ function Dashboard() {
                 setCtoFiltro(null);
                 setTransmissorFiltro(null);
                 setProjetoFiltro(null);
-                setAplicado({ cto: null, transmissor: null, projeto: null });
+                setInterfaceFiltro(null);
+                setAplicado({ cto: null, transmissor: null, projeto: null, interface: null });
                 setPagina(1);
               }}
             >
@@ -739,15 +748,6 @@ function Dashboard() {
                 placeholder="Buscar por login ou caixa"
                 className="pl-9"
                 aria-label="Buscar clientes divergentes"
-              />
-            </div>
-            <div className="w-full max-w-xs">
-              <CampoSelecao
-                rotulo="Interface esperada"
-                placeholder="Filtrar por interface esperada"
-                opcoes={opcoesInterfaceDivergentes.map(({ valor, rotulo }) => ({ valor, rotulo }))}
-                valor={interfaceFiltroDivergentes}
-                aoMudar={setInterfaceFiltroDivergentes}
               />
             </div>
           </div>
