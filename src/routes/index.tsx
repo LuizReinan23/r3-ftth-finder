@@ -95,17 +95,18 @@ function Dashboard() {
   const [ctoFiltro, setCtoFiltro] = useState<string | null>(null);
   const [transmissorFiltro, setTransmissorFiltro] = useState<string | null>(null);
   const [projetoFiltro, setProjetoFiltro] = useState<string | null>(null);
+  const [interfaceFiltro, setInterfaceFiltro] = useState<string | null>(null);
   const [aplicado, setAplicado] = useState<{
     cto: string | null;
     transmissor: string | null;
     projeto: string | null;
-  }>({ cto: null, transmissor: null, projeto: null });
+    interface: string | null;
+  }>({ cto: null, transmissor: null, projeto: null, interface: null });
 
   const [pagina, setPagina] = useState(1);
   const [ctoSelecionada, setCtoSelecionada] = useState<string | null>(null);
   const [verDivergentes, setVerDivergentes] = useState(false);
   const [buscaDivergentes, setBuscaDivergentes] = useState("");
-  const [interfaceFiltroDivergentes, setInterfaceFiltroDivergentes] = useState<string | null>(null);
 
   const listar = useServerFn(listClientesFtth);
   const listarCaixas = useServerFn(listCaixasFtth);
@@ -272,6 +273,7 @@ function Dashboard() {
         if (aplicado.cto && l.id !== aplicado.cto) return false;
         if (aplicado.transmissor && l.id_transmissor !== aplicado.transmissor) return false;
         if (aplicado.projeto && l.id_projeto !== aplicado.projeto) return false;
+        if (aplicado.interface && l.id_interface !== aplicado.interface) return false;
         return true;
       }),
     [linhas, aplicado],
@@ -314,13 +316,12 @@ function Dashboard() {
   const divergentesFiltrados = useMemo(() => {
     const termo = buscaDivergentes.trim().toLowerCase();
     return divergentes.filter((d) => {
-      if (interfaceFiltroDivergentes && d.esperada !== interfaceFiltroDivergentes) return false;
       if (!termo) return true;
       return d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo);
     });
-  }, [divergentes, buscaDivergentes, interfaceFiltroDivergentes]);
+  }, [divergentes, buscaDivergentes]);
 
-  const opcoesInterfaceDivergentes = useMemo(() => {
+  const opcoesInterface = useMemo(() => {
     const contagem = new Map<string, number>();
     for (const c of caixas) {
       if (!c.id_interface) continue;
@@ -377,7 +378,7 @@ function Dashboard() {
           <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-foreground">
             Filtrar informações
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <CampoSelecao
               rotulo="CTO"
               placeholder="Selecionar CTO"
@@ -399,6 +400,13 @@ function Dashboard() {
               valor={projetoFiltro}
               aoMudar={setProjetoFiltro}
             />
+            <CampoSelecao
+              rotulo="Interface"
+              placeholder="Selecionar interface"
+              opcoes={opcoesInterface.map(({ valor, rotulo }) => ({ valor, rotulo }))}
+              valor={interfaceFiltro}
+              aoMudar={setInterfaceFiltro}
+            />
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
             <Button
@@ -407,6 +415,7 @@ function Dashboard() {
                   cto: ctoFiltro,
                   transmissor: transmissorFiltro,
                   projeto: projetoFiltro,
+                  interface: interfaceFiltro,
                 });
                 setPagina(1);
               }}
@@ -419,7 +428,8 @@ function Dashboard() {
                 setCtoFiltro(null);
                 setTransmissorFiltro(null);
                 setProjetoFiltro(null);
-                setAplicado({ cto: null, transmissor: null, projeto: null });
+                setInterfaceFiltro(null);
+                setAplicado({ cto: null, transmissor: null, projeto: null, interface: null });
                 setPagina(1);
               }}
             >
@@ -738,15 +748,6 @@ function Dashboard() {
                 placeholder="Buscar por login ou caixa"
                 className="pl-9"
                 aria-label="Buscar clientes divergentes"
-              />
-            </div>
-            <div className="w-full max-w-xs">
-              <CampoSelecao
-                rotulo="Interface esperada"
-                placeholder="Filtrar por interface esperada"
-                opcoes={opcoesInterfaceDivergentes.map(({ valor, rotulo }) => ({ valor, rotulo }))}
-                valor={interfaceFiltroDivergentes}
-                aoMudar={setInterfaceFiltroDivergentes}
               />
             </div>
           </div>
