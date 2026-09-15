@@ -67,6 +67,7 @@ export type Database = {
           id_caixa_ftth: string | null
           interface_transmissao: string | null
           login: string
+          online: string | null
           status_ativo: string | null
         }
         Insert: {
@@ -76,6 +77,7 @@ export type Database = {
           id_caixa_ftth?: string | null
           interface_transmissao?: string | null
           login: string
+          online?: string | null
           status_ativo?: string | null
         }
         Update: {
@@ -85,6 +87,7 @@ export type Database = {
           id_caixa_ftth?: string | null
           interface_transmissao?: string | null
           login?: string
+          online?: string | null
           status_ativo?: string | null
         }
         Relationships: []

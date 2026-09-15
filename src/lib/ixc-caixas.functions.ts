@@ -72,11 +72,13 @@ export const syncIxcCaixas = createServerFn({ method: "POST" }).handler(async ()
       throw new Error(`A IXC respondeu com erro (código ${resposta.status}).`);
     }
 
-    const json = (await resposta.json()) as { registros?: IxcRegistro[] };
+    const json = (await resposta.json()) as { registros?: IxcRegistro[]; total?: unknown };
     const lote = Array.isArray(json.registros) ? json.registros : [];
     registros.push(...lote);
 
-    if (lote.length < RP) break;
+    const total = Number(json.total);
+    if (lote.length === 0) break;
+    if (Number.isFinite(total) && total > 0 && registros.length >= total) break;
     page += 1;
   }
 

@@ -23,7 +23,7 @@ export const listClientesFtth = createServerFn({ method: "GET" }).handler(async 
   const { data, error } = await clientePublico()
     .from("clientes_ftth")
     .select(
-      "id, login, id_caixa_ftth, ftth_porta, status_ativo, interface_transmissao, atualizado_em",
+      "id, login, id_caixa_ftth, ftth_porta, status_ativo, online, interface_transmissao, atualizado_em",
     )
     .order("atualizado_em", { ascending: false })
     .limit(50000);
