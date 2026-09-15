@@ -1,0 +1,1 @@
+ALTER TABLE public.clientes_ftth ADD COLUMN IF NOT EXISTS online text;

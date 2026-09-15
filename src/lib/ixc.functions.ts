@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 type IxcRegistro = Record<string, unknown>;
 
 const IXC_URL = "https://central.r3internet.com.br/webservice/v1/radusuarios";
-const RP = 20;
+const RP = 1000;
 
 function texto(valor: unknown): string | null {
   if (valor === null || valor === undefined) return null;
@@ -65,11 +65,13 @@ export const syncIxcClientes = createServerFn({ method: "POST" }).handler(async 
       throw new Error(`A IXC respondeu com erro (código ${resposta.status}).`);
     }
 
-    const json = (await resposta.json()) as { registros?: IxcRegistro[] };
+    const json = (await resposta.json()) as { registros?: IxcRegistro[]; total?: unknown };
     const lote = Array.isArray(json.registros) ? json.registros : [];
     registros.push(...lote);
 
-    if (lote.length < RP) break;
+    const total = Number(json.total);
+    if (lote.length === 0) break;
+    if (Number.isFinite(total) && total > 0 && registros.length >= total) break;
     page += 1;
   }
 
@@ -80,6 +82,7 @@ export const syncIxcClientes = createServerFn({ method: "POST" }).handler(async 
       id_caixa_ftth: texto(r["id_caixa_ftth"]),
       ftth_porta: texto(r["ftth_porta"]),
       status_ativo: texto(r["ativo"]) ?? "N",
+      online: texto(r["online"]),
       interface_transmissao: texto(r["interface_transmissao"]),
       atualizado_em: agora,
     }))

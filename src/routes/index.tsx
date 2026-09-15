@@ -245,8 +245,8 @@ function Dashboard() {
       .map((caixa) => {
         const lista = clientesPorCaixa.get(caixa.id) ?? [];
         const total = lista.length;
-        const offline = lista.filter((c) => c.status_ativo !== "S").length;
-        const online = total - offline;
+        const offline = lista.filter((c) => c.online === "N").length;
+        const online = lista.filter((c) => c.online === "S").length;
         const capacidade = caixa.capacidade ?? 0;
         return {
           ...caixa,
@@ -654,13 +654,13 @@ function Dashboard() {
                                     <span
                                       key={c.id}
                                       className={`flex items-center gap-1 ${
-                                        c.status_ativo !== "S"
+                                        c.online === "N"
                                           ? "text-destructive"
                                           : "text-foreground"
                                       }`}
                                     >
                                       {c.login}
-                                      {c.status_ativo !== "S" && (
+                                      {c.online === "N" && (
                                         <span className="text-[10px] uppercase text-muted-foreground">
                                           offline
                                         </span>
@@ -670,7 +670,7 @@ function Dashboard() {
                                 </span>
                               ) : (() => {
                                   const cli = p.clientes[0]!;
-                                  const offline = cli.status_ativo !== "S";
+                                  const offline = cli.online === "N";
                                   return (
                                     <span
                                       className={`flex items-center gap-1 ${
