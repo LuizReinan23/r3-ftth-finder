@@ -273,6 +273,7 @@ function Dashboard() {
         if (aplicado.cto && l.id !== aplicado.cto) return false;
         if (aplicado.transmissor && l.id_transmissor !== aplicado.transmissor) return false;
         if (aplicado.projeto && l.id_projeto !== aplicado.projeto) return false;
+        if (aplicado.interface && l.id_interface !== aplicado.interface) return false;
         return true;
       }),
     [linhas, aplicado],
@@ -315,13 +316,12 @@ function Dashboard() {
   const divergentesFiltrados = useMemo(() => {
     const termo = buscaDivergentes.trim().toLowerCase();
     return divergentes.filter((d) => {
-      if (interfaceFiltroDivergentes && d.esperada !== interfaceFiltroDivergentes) return false;
       if (!termo) return true;
       return d.login.toLowerCase().includes(termo) || d.caixa.toLowerCase().includes(termo);
     });
-  }, [divergentes, buscaDivergentes, interfaceFiltroDivergentes]);
+  }, [divergentes, buscaDivergentes]);
 
-  const opcoesInterfaceDivergentes = useMemo(() => {
+  const opcoesInterface = useMemo(() => {
     const contagem = new Map<string, number>();
     for (const c of caixas) {
       if (!c.id_interface) continue;
