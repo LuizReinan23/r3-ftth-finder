@@ -95,17 +95,18 @@ function Dashboard() {
   const [ctoFiltro, setCtoFiltro] = useState<string | null>(null);
   const [transmissorFiltro, setTransmissorFiltro] = useState<string | null>(null);
   const [projetoFiltro, setProjetoFiltro] = useState<string | null>(null);
+  const [interfaceFiltro, setInterfaceFiltro] = useState<string | null>(null);
   const [aplicado, setAplicado] = useState<{
     cto: string | null;
     transmissor: string | null;
     projeto: string | null;
-  }>({ cto: null, transmissor: null, projeto: null });
+    interface: string | null;
+  }>({ cto: null, transmissor: null, projeto: null, interface: null });
 
   const [pagina, setPagina] = useState(1);
   const [ctoSelecionada, setCtoSelecionada] = useState<string | null>(null);
   const [verDivergentes, setVerDivergentes] = useState(false);
   const [buscaDivergentes, setBuscaDivergentes] = useState("");
-  const [interfaceFiltroDivergentes, setInterfaceFiltroDivergentes] = useState<string | null>(null);
 
   const listar = useServerFn(listClientesFtth);
   const listarCaixas = useServerFn(listCaixasFtth);
