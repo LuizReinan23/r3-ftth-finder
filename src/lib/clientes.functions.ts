@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, Tables } from "@/integrations/supabase/types";
 
 function clientePublico() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -44,7 +44,7 @@ async function lerTudo<T>(
 }
 
 export const listClientesFtth = createServerFn({ method: "GET" }).handler(async () =>
-  lerTudo(
+  lerTudo<Tables<"clientes_ftth">>(
     "clientes_ftth",
     "id, login, id_caixa_ftth, ftth_porta, status_ativo, online, interface_transmissao, atualizado_em",
     "login",
@@ -53,7 +53,7 @@ export const listClientesFtth = createServerFn({ method: "GET" }).handler(async 
 );
 
 export const listCaixasFtth = createServerFn({ method: "GET" }).handler(async () =>
-  lerTudo(
+  lerTudo<Tables<"caixas_ftth">>(
     "caixas_ftth",
     "id, descricao, capacidade, status, endereco, tipo, id_transmissor, id_interface, id_projeto, atualizado_em",
     "id",
@@ -62,13 +62,13 @@ export const listCaixasFtth = createServerFn({ method: "GET" }).handler(async ()
 );
 
 export const listTransmissores = createServerFn({ method: "GET" }).handler(async () =>
-  lerTudo("transmissores", "id, descricao, atualizado_em", "id", 10000),
+  lerTudo<Tables<"transmissores">>("transmissores", "id, descricao, atualizado_em", "id", 10000),
 );
 
 export const listInterfacesFtth = createServerFn({ method: "GET" }).handler(async () =>
-  lerTudo("interfaces_ftth", "id, transmissor, interface, atualizado_em", "id", 10000),
+  lerTudo<Tables<"interfaces_ftth">>("interfaces_ftth", "id, transmissor, interface, atualizado_em", "id", 10000),
 );
 
 export const listProjetos = createServerFn({ method: "GET" }).handler(async () =>
-  lerTudo("projetos", "id, descricao, atualizado_em", "id", 10000),
+  lerTudo<Tables<"projetos">>("projetos", "id, descricao, atualizado_em", "id", 10000),
 );
