@@ -19,57 +19,56 @@ function clientePublico() {
   });
 }
 
-export const listClientesFtth = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await clientePublico()
-    .from("clientes_ftth")
-    .select(
-      "id, login, id_caixa_ftth, ftth_porta, status_ativo, online, interface_transmissao, atualizado_em",
-    )
-    .order("atualizado_em", { ascending: false })
-    .limit(50000);
+const BLOCO = 1000;
 
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
+async function lerTudo<T>(
+  tabela: "clientes_ftth" | "caixas_ftth" | "transmissores" | "interfaces_ftth" | "projetos",
+  colunas: string,
+  ordem: string,
+  maximo: number,
+): Promise<T[]> {
+  const sb = clientePublico();
+  const linhas: T[] = [];
+  for (let inicio = 0; inicio < maximo; inicio += BLOCO) {
+    const { data, error } = await sb
+      .from(tabela)
+      .select(colunas)
+      .order(ordem, { ascending: true })
+      .range(inicio, inicio + BLOCO - 1);
+    if (error) throw new Error(error.message);
+    const lote = (data ?? []) as unknown as T[];
+    linhas.push(...lote);
+    if (lote.length < BLOCO) break;
+  }
+  return linhas;
+}
 
-export const listCaixasFtth = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await clientePublico()
-    .from("caixas_ftth")
-    .select(
-      "id, descricao, capacidade, status, endereco, tipo, id_transmissor, id_interface, id_projeto, atualizado_em",
-    )
-    .limit(20000);
+export const listClientesFtth = createServerFn({ method: "GET" }).handler(async () =>
+  lerTudo(
+    "clientes_ftth",
+    "id, login, id_caixa_ftth, ftth_porta, status_ativo, online, interface_transmissao, atualizado_em",
+    "login",
+    60000,
+  ),
+);
 
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
+export const listCaixasFtth = createServerFn({ method: "GET" }).handler(async () =>
+  lerTudo(
+    "caixas_ftth",
+    "id, descricao, capacidade, status, endereco, tipo, id_transmissor, id_interface, id_projeto, atualizado_em",
+    "id",
+    30000,
+  ),
+);
 
-export const listTransmissores = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await clientePublico()
-    .from("transmissores")
-    .select("id, descricao, atualizado_em")
-    .limit(5000);
+export const listTransmissores = createServerFn({ method: "GET" }).handler(async () =>
+  lerTudo("transmissores", "id, descricao, atualizado_em", "id", 10000),
+);
 
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
+export const listInterfacesFtth = createServerFn({ method: "GET" }).handler(async () =>
+  lerTudo("interfaces_ftth", "id, transmissor, interface, atualizado_em", "id", 10000),
+);
 
-export const listInterfacesFtth = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await clientePublico()
-    .from("interfaces_ftth")
-    .select("id, transmissor, interface, atualizado_em")
-    .limit(5000);
-
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
-
-export const listProjetos = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await clientePublico()
-    .from("projetos")
-    .select("id, descricao, atualizado_em")
-    .limit(5000);
-
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
+export const listProjetos = createServerFn({ method: "GET" }).handler(async () =>
+  lerTudo("projetos", "id, descricao, atualizado_em", "id", 10000),
+);
